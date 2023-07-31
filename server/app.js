@@ -3,6 +3,7 @@ const app = express();
 const cors = require('cors');
 const mongoose = require('mongoose');
 const User = require('./models/User')
+const passwordValidator = require('./services/passwordValidationService');
 
 
 
@@ -47,33 +48,62 @@ app.get('/users', async (req, res) => {
     }
 })
 
+app.post('/api/v1/login', async(req, res) => {
+    const {email, password} = req.body;
+
+    try{
+        const user = await User.findOne( {email} );
+
+        if(user && user.password === password){
+            return res.json({message: "login successful"});
+        }else{
+            return res.status(401).json({error: "Invalid email or password." })
+        }
+    }catch(err){
+        console.error('Error during login', err);
+        return res.status(500).json({error: 'Internal Server Error'});
+    }
+});
+
 
 
 
 
 app.post('/api/v1/register', async(req, res) => {
     try{
-        console.log(req.body);
         
         const newUser = new User();
 
-        newUser.name = req.body.name;
+        newUser.firstName = req.body.firstName;
+        newUser.lastName = req.body.lastName;
         newUser.email = req.body.email;
         newUser.password = req.body.password;
+
+        if(!passwordValidator(newUser.password)){
+            return res.status(400).json( {error: 'Invalid password' });
+        }
 
         User.create(newUser)
             .then((createdUser) =>{
                 console.log('New User Created: ', createdUser);
+                res.json(req.body);
             })
             .catch((error) =>{
                 console.error('Error creating user', error);
+                if(error.code === 11000){
+                    return res.status(409).json({ error: 'Email is already in use' });
+                }
             });
 
-        res.json(req.body);
+        
 
 
     }catch(err){
         console.error(`Error updating data ${err}`);
+   
+
+
+
         res.status(500).json({ err: 'Internal Server Error' });
     }
 })

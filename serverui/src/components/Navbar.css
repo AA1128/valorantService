@@ -1,0 +1,37 @@
+nav{
+    background-color: #fff;
+    color: #333;
+    padding: 10px;
+    padding-inline-start: 40px;
+    padding-inline-end: 40px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    border-bottom: 1px solid #ccc;
+}
+
+
+#userLoginContainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+
+
+#userLogin{
+    height: 42px;
+    display: flex;
+    flex-direction: row;
+    
+}
+
+#userLogin p{
+    padding: 5px;
+}
+
+#userLogin button{
+    border: 1px solid #dddddd;
+    margin: 0;
+
+}
